@@ -22,6 +22,7 @@
       --primary: #39c6ff;
       --secondary: #8b5cf6;
       --accent: #22c55e;
+      --gold: #f59e0b;
 
       --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
       --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.28);
@@ -31,7 +32,7 @@
       --radius-md: 16px;
       --radius-sm: 12px;
 
-      --max-width: 1180px;
+      --max-width: 1240px;
     }
 
     * {
@@ -200,7 +201,7 @@
     }
 
     .hero p {
-      max-width: 720px;
+      max-width: 760px;
       margin: 0 auto;
       color: var(--muted);
       font-size: clamp(14px, 2vw, 17px);
@@ -209,7 +210,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 1.02fr 0.98fr;
+      grid-template-columns: 1.05fr 0.95fr;
       gap: 22px;
       align-items: start;
     }
@@ -291,7 +292,7 @@
     .winner-box {
       position: relative;
       padding: 28px 24px;
-      min-height: 340px;
+      min-height: 360px;
       border-radius: 26px;
       border: 1px solid rgba(255,255,255,0.08);
       background:
@@ -370,6 +371,7 @@
       font-size: 14px;
       line-height: 1.65;
       text-align: center;
+      min-height: 24px;
     }
 
     .controls-card {
@@ -402,6 +404,10 @@
       background: linear-gradient(135deg, rgba(57,198,255,0.16), rgba(139,92,246,0.16));
       border: 1px solid rgba(255,255,255,0.08);
       flex-shrink: 0;
+    }
+
+    .section-icon.gold {
+      background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(250,204,21,0.16));
     }
 
     .section-title {
@@ -464,7 +470,7 @@
     }
 
     .field textarea {
-      min-height: 250px;
+      min-height: 220px;
       resize: vertical;
       line-height: 1.55;
     }
@@ -512,6 +518,13 @@
       margin-top: 4px;
     }
 
+    .actions-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
     .btn {
       appearance: none;
       border: none;
@@ -554,6 +567,15 @@
     .btn-secondary:hover {
       border-color: rgba(57,198,255,0.45);
       background: rgba(57,198,255,0.08);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 45%, #f59e0b 100%);
+      color: #1c1403;
+    }
+
+    .btn-gold:hover {
+      box-shadow: 0 16px 34px rgba(245,158,11,0.25);
     }
 
     .mini-stats {
@@ -657,12 +679,13 @@
 
       .grid-2,
       .actions,
+      .actions-3,
       .mini-stats {
         grid-template-columns: 1fr;
       }
 
       .field textarea {
-        min-height: 180px;
+        min-height: 170px;
       }
 
       .section {
@@ -694,10 +717,9 @@
     </div>
 
     <div class="hero">
-      <h1>Pick a winner with a clean, premium interface</h1>
+      <h1>Pick a winner with a premium interface</h1>
       <p>
-        Use a number range or paste a participant list. The layout is optimized for desktop and mobile,
-        with a polished result screen and simple actions.
+        Desktop and mobile friendly layout with random mode and a separate lucky mode for preset results.
       </p>
     </div>
 
@@ -735,9 +757,7 @@
             </div>
           </div>
 
-          <div class="result-note">
-            Paste participants line by line, or use the numeric range fields to generate a random number.
-          </div>
+          <div id="winnerMeta" class="result-note"></div>
         </div>
       </div>
 
@@ -793,6 +813,37 @@
             <button id="btnCopy" class="btn btn-secondary">📋 Copy Result</button>
           </div>
 
+          <div class="divider"><span>lucky mode</span></div>
+
+          <div class="section">
+            <div class="section-head">
+              <div class="section-icon gold">✨</div>
+              <div>
+                <div class="section-title">Lucky mode</div>
+                <div class="section-subtitle">Show a preset winner in a separate mode</div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label for="luckyNumber">Lucky number</label>
+                <input id="luckyNumber" type="number" placeholder="7" />
+              </div>
+              <div class="field">
+                <label for="luckyName">Lucky name</label>
+                <input id="luckyName" type="text" placeholder="@john_doe" />
+              </div>
+            </div>
+
+            <div class="actions-3">
+              <button id="btnLucky" class="btn btn-gold">✨ Show Lucky</button>
+              <button id="btnClear" class="btn btn-secondary">🗑 Clear</button>
+              <button id="btnFillDemo" class="btn btn-secondary">⚡ Demo Data</button>
+            </div>
+
+            <div class="hint">This mode is separate from random selection.</div>
+          </div>
+
           <div class="footer-note">
             Clean layout, fast interaction, good readability on laptop and phone.
           </div>
@@ -807,8 +858,12 @@
     const minEl = el("min");
     const maxEl = el("max");
     const namesEl = el("names");
+    const luckyNumberEl = el("luckyNumber");
+    const luckyNameEl = el("luckyName");
+
     const winnerMain = el("winnerMain");
     const winnerName = el("winnerName");
+    const winnerMeta = el("winnerMeta");
 
     const statMode = el("statMode");
     const statEntries = el("statEntries");
@@ -858,18 +913,20 @@
       winnerName.classList.add("flash");
     }
 
+    function updateEntriesStat() {
+      const names = getNames();
+      statEntries.textContent = String(names.length);
+    }
+
     function setPlaceholder() {
       winnerMain.textContent = "?";
       winnerMain.classList.add("placeholder");
       winnerName.style.display = "none";
       winnerName.textContent = "";
+      winnerMeta.textContent = "";
       statMode.textContent = "—";
       statPicked.textContent = "—";
-    }
-
-    function updateEntriesStat() {
-      const names = getNames();
-      statEntries.textContent = String(names.length);
+      updateEntriesStat();
     }
 
     namesEl.addEventListener("input", updateEntriesStat);
@@ -916,6 +973,7 @@
         winnerName.style.display = "block";
         winnerName.textContent = picked;
 
+        winnerMeta.textContent = "Random list result";
         statMode.textContent = "List";
         statEntries.textContent = String(names.length);
         statPicked.textContent = String(idx + 1);
@@ -937,6 +995,7 @@
       winnerName.style.display = "none";
       winnerName.textContent = "";
 
+      winnerMeta.textContent = "Random range result";
       statMode.textContent = "Range";
       statEntries.textContent = String(Math.max(0, max - min + 1));
       statPicked.textContent = String(num);
@@ -944,8 +1003,48 @@
       animateResult();
     });
 
+    el("btnLucky").addEventListener("click", () => {
+      const luckyNumber = luckyNumberEl.value.trim();
+      const luckyName = luckyNameEl.value.trim();
+
+      if (!luckyNumber || !luckyName) {
+        alert("Enter lucky number and lucky name.");
+        return;
+      }
+
+      winnerMain.textContent = luckyNumber;
+      winnerMain.classList.remove("placeholder");
+
+      winnerName.style.display = "block";
+      winnerName.textContent = luckyName;
+
+      winnerMeta.textContent = "Lucky mode result";
+      statMode.textContent = "Lucky";
+      statPicked.textContent = luckyNumber;
+
+      const names = getNames();
+      statEntries.textContent = names.length ? String(names.length) : "1";
+
+      animateResult();
+    });
+
+    el("btnClear").addEventListener("click", () => {
+      winnerMain.textContent = "?";
+      winnerMain.classList.add("placeholder");
+      winnerName.style.display = "none";
+      winnerName.textContent = "";
+      winnerMeta.textContent = "";
+      statMode.textContent = "—";
+      statPicked.textContent = "—";
+      updateEntriesStat();
+    });
+
+    el("btnFillDemo").addEventListener("click", () => {
+      luckyNumberEl.value = "7";
+      luckyNameEl.value = "@john_doe";
+    });
+
     setPlaceholder();
-    updateEntriesStat();
   </script>
 </body>
 </html>
