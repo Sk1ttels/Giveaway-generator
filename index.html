@@ -1030,9 +1030,10 @@
       winnerMain.classList.add("placeholder");
       winnerName.style.display = "none";
       winnerName.textContent = "";
-      winnerMeta.textContent = "";
-      statMode.textContent = "—";
-      statPicked.textContent = "—";
+      winnerMeta.textContent = "Random range result";
+      statMode.textContent = "Range";
+      statEntries.textContent = String(Math.max(0, max - min + 1));
+      statPicked.textContent = String(num);
       updateEntriesStat();
     });
 
