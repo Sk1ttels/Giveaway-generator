@@ -860,6 +860,7 @@
     const namesEl = el("names");
     const luckyNumberEl = el("luckyNumber");
     const luckyNameEl = el("luckyName");
+    const luckyMetaE1 = el("luckyMeta");
 
     const winnerMain = el("winnerMain");
     const winnerName = el("winnerName");
@@ -1040,6 +1041,7 @@
     el("btnFillDemo").addEventListener("click", () => {
       luckyNumberEl.value = "7";
       luckyNameEl.value = "@john_doe";
+      luckyPickedE1.textContent = String(num);
     });
 
     setPlaceholder();
