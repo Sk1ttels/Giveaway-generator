@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Giveaway Winner Picker</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
-    
+
     :root {
       --primary: #00d4ff;
       --secondary: #7c3aed;
@@ -19,13 +19,18 @@
       --glow-secondary: rgba(124, 58, 237, 0.5);
       --glow-accent: rgba(16, 185, 129, 0.5);
     }
-    
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-    
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+    }
+
     body {
       font-family: 'Poppins', sans-serif;
       background: #0a0f1e;
@@ -34,12 +39,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding:
+        max(16px, env(safe-area-inset-top))
+        16px
+        max(16px, env(safe-area-inset-bottom))
+        16px;
       position: relative;
       overflow-x: hidden;
     }
-    
-    /* Animated background */
+
     body::before {
       content: '';
       position: fixed;
@@ -47,21 +55,20 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: 
+      background:
         radial-gradient(circle at 20% 50%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
       animation: backgroundMove 20s ease infinite;
       z-index: -1;
     }
-    
+
     @keyframes backgroundMove {
       0%, 100% { transform: translate(0, 0) rotate(0deg); }
       33% { transform: translate(5%, -5%) rotate(120deg); }
       66% { transform: translate(-5%, 5%) rotate(240deg); }
     }
-    
-    /* Floating particles */
+
     .particle {
       position: fixed;
       width: 3px;
@@ -72,78 +79,79 @@
       animation: float 15s infinite;
       z-index: -1;
     }
-    
+
     @keyframes float {
       0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
       10% { opacity: 0.3; }
       90% { opacity: 0.3; }
       100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
     }
-    
+
     .container {
       width: 100%;
       max-width: 650px;
       position: relative;
       z-index: 1;
     }
-    
+
     .header {
       text-align: center;
-      margin-bottom: 50px;
+      margin-bottom: 32px;
       position: relative;
     }
-    
+
     .logo {
-      font-size: 80px;
-      margin-bottom: 20px;
+      font-size: 72px;
+      margin-bottom: 14px;
       display: inline-block;
       animation: logoFloat 3s ease-in-out infinite;
       filter: drop-shadow(0 0 20px var(--glow-primary));
     }
-    
+
     @keyframes logoFloat {
       0%, 100% { transform: translateY(0) rotate(-5deg); }
       50% { transform: translateY(-15px) rotate(5deg); }
     }
-    
+
     h1 {
-      font-size: 42px;
+      font-size: 40px;
       font-weight: 900;
       background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
       background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       animation: gradientShift 5s ease infinite;
       letter-spacing: -1px;
+      line-height: 1.1;
     }
-    
+
     @keyframes gradientShift {
       0%, 100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
     }
-    
+
     .subtitle {
       color: var(--text-muted);
       font-size: 15px;
       font-weight: 500;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
     }
-    
+
     .card {
       background: var(--bg-card);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 30px;
-      padding: 40px;
-      box-shadow: 
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow:
         0 20px 60px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
       position: relative;
       overflow: hidden;
     }
-    
+
     .card::before {
       content: '';
       position: absolute;
@@ -154,45 +162,46 @@
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
       animation: shimmer 3s infinite;
     }
-    
+
     @keyframes shimmer {
       0% { left: -100%; }
       100% { left: 100%; }
     }
-    
+
     .winner-display {
       text-align: center;
-      padding: 70px 30px;
+      padding: 50px 20px;
       background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
       border: 2px solid transparent;
       background-clip: padding-box;
-      border-radius: 25px;
-      margin-bottom: 40px;
+      border-radius: 24px;
+      margin-bottom: 28px;
       position: relative;
       overflow: hidden;
-      min-height: 280px;
+      min-height: 220px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 12px;
     }
-    
+
     .winner-display::before {
       content: '';
       position: absolute;
       inset: -2px;
       background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-      border-radius: 25px;
+      border-radius: 24px;
       z-index: -1;
       opacity: 0.5;
       animation: borderRotate 3s linear infinite;
     }
-    
+
     @keyframes borderRotate {
       0% { filter: hue-rotate(0deg); }
       100% { filter: hue-rotate(360deg); }
     }
-    
+
     .winner-display::after {
       content: '';
       position: absolute;
@@ -200,37 +209,37 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: 
+      background:
         radial-gradient(circle, var(--glow-primary) 0%, transparent 40%),
         radial-gradient(circle, var(--glow-secondary) 0%, transparent 40%);
       animation: glowPulse 4s ease-in-out infinite;
       opacity: 0.3;
     }
-    
+
     @keyframes glowPulse {
-      0%, 100% { 
+      0%, 100% {
         transform: translate(0, 0) scale(1);
         opacity: 0.2;
       }
-      50% { 
+      50% {
         transform: translate(10%, 10%) scale(1.2);
         opacity: 0.4;
       }
     }
-    
+
     .winner-label {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 3px;
-      margin-bottom: 25px;
+      margin-bottom: 10px;
       position: relative;
       z-index: 1;
     }
-    
+
     .winner-value {
-      font-size: 85px;
+      font-size: 78px;
       font-weight: 900;
       background: linear-gradient(135deg, var(--primary), var(--accent));
       -webkit-background-clip: text;
@@ -242,37 +251,40 @@
       margin-bottom: 0;
       filter: drop-shadow(0 0 30px var(--glow-primary));
       font-variant-numeric: tabular-nums;
+      word-break: break-word;
     }
-    
+
     .winner-name {
-      font-size: 36px;
+      font-size: 30px;
       font-weight: 700;
       color: var(--text);
       position: relative;
       z-index: 1;
-      margin-top: 20px;
+      margin-top: 4px;
       word-break: break-word;
+      overflow-wrap: anywhere;
       text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+      max-width: 100%;
     }
-    
+
     .placeholder {
       opacity: 0.2;
-      font-size: 100px;
+      font-size: 96px;
       animation: placeholderPulse 2s ease-in-out infinite;
     }
-    
+
     @keyframes placeholderPulse {
       0%, 100% { opacity: 0.2; transform: scale(1); }
       50% { opacity: 0.3; transform: scale(1.05); }
     }
-    
+
     .form-group {
-      margin-bottom: 32px;
+      margin-bottom: 24px;
       position: relative;
     }
-    
+
     .form-group-inner {
-      padding: 24px;
+      padding: 20px;
       background: rgba(15, 23, 42, 0.5);
       backdrop-filter: blur(10px);
       border-radius: 20px;
@@ -281,7 +293,7 @@
       position: relative;
       overflow: hidden;
     }
-    
+
     .form-group-inner::before {
       content: '';
       position: absolute;
@@ -293,18 +305,18 @@
       opacity: 0;
       transition: opacity 0.4s;
     }
-    
+
     .form-group-inner:hover {
       background: rgba(15, 23, 42, 0.7);
       border-color: rgba(0, 212, 255, 0.3);
       transform: translateY(-2px);
       box-shadow: 0 10px 30px rgba(0, 212, 255, 0.1);
     }
-    
+
     .form-group-inner:hover::before {
       opacity: 1;
     }
-    
+
     label {
       display: flex;
       align-items: center;
@@ -315,28 +327,28 @@
       margin-bottom: 16px;
       letter-spacing: 0.5px;
     }
-    
+
     label .emoji {
-      font-size: 24px;
+      font-size: 22px;
       filter: drop-shadow(0 2px 8px rgba(0, 212, 255, 0.5));
       animation: emojiFloat 3s ease-in-out infinite;
     }
-    
+
     @keyframes emojiFloat {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-5px); }
     }
-    
+
     .input-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 14px;
     }
-    
+
     .input-wrapper {
       position: relative;
     }
-    
+
     .input-label {
       position: absolute;
       top: -10px;
@@ -352,7 +364,7 @@
       z-index: 1;
       box-shadow: 0 4px 10px rgba(0, 212, 255, 0.3);
     }
-    
+
     input, textarea {
       width: 100%;
       background: rgba(10, 15, 30, 0.6);
@@ -365,30 +377,32 @@
       outline: none;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-family: 'Poppins', sans-serif;
+      -webkit-appearance: none;
+      appearance: none;
     }
-    
+
     input:focus, textarea:focus {
       border-color: var(--primary);
       background: rgba(10, 15, 30, 0.9);
-      box-shadow: 
+      box-shadow:
         0 0 0 4px rgba(0, 212, 255, 0.1),
         0 8px 20px rgba(0, 212, 255, 0.2);
       transform: translateY(-2px);
     }
-    
+
     input::placeholder, textarea::placeholder {
       color: rgba(148, 163, 184, 0.5);
       font-weight: 400;
     }
-    
+
     textarea {
       min-height: 180px;
       resize: vertical;
       font-family: 'Courier New', monospace;
-      line-height: 1.8;
+      line-height: 1.7;
       font-size: 15px;
     }
-    
+
     .hint {
       font-size: 12px;
       color: var(--text-muted);
@@ -399,34 +413,36 @@
       gap: 8px;
       font-weight: 500;
     }
-    
+
     .hint::before {
       content: '✨';
       font-size: 16px;
       animation: sparkle 2s ease-in-out infinite;
     }
-    
+
     @keyframes sparkle {
       0%, 100% { opacity: 0.5; transform: scale(1); }
       50% { opacity: 1; transform: scale(1.2); }
     }
-    
+
     .btn {
       width: 100%;
-      padding: 22px 32px;
+      padding: 18px 24px;
       border: none;
       border-radius: 18px;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
       cursor: pointer;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
       font-family: 'Poppins', sans-serif;
+      min-height: 58px;
+      touch-action: manipulation;
     }
-    
+
     .btn::before {
       content: '';
       position: absolute;
@@ -439,82 +455,82 @@
       transform: translate(-50%, -50%);
       transition: width 0.6s, height 0.6s;
     }
-    
+
     .btn:active::before {
       width: 400px;
       height: 400px;
     }
-    
+
     .btn-primary {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: #ffffff;
-      box-shadow: 
+      box-shadow:
         0 15px 35px rgba(0, 212, 255, 0.4),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
       position: relative;
     }
-    
+
     .btn-primary::after {
       content: '✨';
       position: absolute;
-      right: 30px;
+      right: 24px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 20px;
+      font-size: 18px;
       opacity: 0.8;
     }
-    
+
     .btn-primary:hover {
       transform: translateY(-4px);
-      box-shadow: 
+      box-shadow:
         0 20px 45px rgba(0, 212, 255, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
       background: linear-gradient(135deg, var(--secondary), var(--accent));
     }
-    
+
     .btn-primary:active {
       transform: translateY(-2px);
     }
-    
+
     .btn-secondary {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
       border: 2px solid rgba(255, 255, 255, 0.1);
       color: var(--text);
-      margin-top: 16px;
+      margin-top: 14px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
-    
+
     .btn-secondary:hover {
       border-color: var(--primary);
       background: rgba(0, 212, 255, 0.1);
       transform: translateY(-3px);
       box-shadow: 0 12px 30px rgba(0, 212, 255, 0.3);
     }
-    
+
     .btn-secondary:active {
       transform: translateY(-1px);
     }
-    
+
     .divider {
       text-align: center;
       color: var(--text-muted);
       font-weight: 700;
       font-size: 13px;
-      margin: 40px 0;
+      margin: 30px 0;
       position: relative;
       text-transform: uppercase;
       letter-spacing: 3px;
     }
-    
+
     .divider span {
       background: var(--bg-card);
-      padding: 0 25px;
+      padding: 0 20px;
       position: relative;
       z-index: 1;
       display: inline-block;
     }
-    
+
     .divider::before {
       content: '';
       position: absolute;
@@ -523,49 +539,123 @@
       right: 0;
       height: 2px;
       background: linear-gradient(
-        90deg, 
-        transparent, 
-        rgba(0, 212, 255, 0.3) 25%, 
-        rgba(124, 58, 237, 0.3) 50%, 
-        rgba(16, 185, 129, 0.3) 75%, 
+        90deg,
+        transparent,
+        rgba(0, 212, 255, 0.3) 25%,
+        rgba(124, 58, 237, 0.3) 50%,
+        rgba(16, 185, 129, 0.3) 75%,
         transparent
       );
     }
-    
+
     @media (max-width: 640px) {
+      body {
+        display: block;
+      }
+
       .container {
-        padding: 0;
+        max-width: 100%;
       }
-      
-      .card {
-        padding: 30px 24px;
+
+      .header {
+        margin-bottom: 24px;
       }
-      
-      .winner-value {
-        font-size: 64px;
-      }
-      
-      .winner-name {
-        font-size: 28px;
-      }
-      
-      h1 {
-        font-size: 36px;
-      }
-      
+
       .logo {
-        font-size: 64px;
+        font-size: 56px;
+        margin-bottom: 10px;
       }
-      
+
+      h1 {
+        font-size: 30px;
+      }
+
+      .subtitle {
+        font-size: 13px;
+      }
+
+      .card {
+        padding: 20px 16px;
+        border-radius: 22px;
+      }
+
+      .winner-display {
+        min-height: 190px;
+        padding: 36px 14px;
+        border-radius: 20px;
+      }
+
+      .winner-value {
+        font-size: 52px;
+      }
+
+      .winner-name {
+        font-size: 22px;
+        line-height: 1.3;
+      }
+
+      .placeholder {
+        font-size: 68px;
+      }
+
+      .form-group-inner {
+        padding: 16px;
+        border-radius: 16px;
+      }
+
+      .input-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      input, textarea {
+        padding: 16px;
+        border-radius: 14px;
+        font-size: 16px;
+      }
+
+      textarea {
+        min-height: 150px;
+      }
+
+      .btn {
+        min-height: 54px;
+        font-size: 15px;
+        padding: 16px 18px;
+        border-radius: 16px;
+      }
+
       .btn-primary::after {
         display: none;
+      }
+
+      .divider {
+        margin: 24px 0;
+      }
+    }
+
+    @media (max-width: 380px) {
+      h1 {
+        font-size: 26px;
+      }
+
+      .winner-value {
+        font-size: 44px;
+      }
+
+      .winner-name {
+        font-size: 19px;
+      }
+
+      .winner-label {
+        letter-spacing: 2px;
+        font-size: 11px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!-- Floating particles -->
   <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
   <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
   <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
@@ -624,17 +714,12 @@
 @mike_wilson
 
 Enter each participant on a new line..."></textarea>
-          <div class="hint">One participant per line (usernames, names, or tickets)</div>
+          <div class="hint">One participant per line</div>
         </div>
       </div>
 
-      <button id="btnPick" class="btn btn-primary">
-        🎯 Pick Winner
-      </button>
-      
-      <button id="btnCopy" class="btn btn-secondary">
-        📋 Copy Result
-      </button>
+      <button id="btnPick" class="btn btn-primary">🎯 Pick Winner</button>
+      <button id="btnCopy" class="btn btn-secondary">📋 Copy Result</button>
     </div>
   </div>
 
@@ -647,7 +732,6 @@ Enter each participant on a new line..."></textarea>
   const winnerMain = el("winnerMain");
   const winnerName = el("winnerName");
 
-  // Seeded random number generator
   function xmur3(str) {
     let h = 1779033703 ^ str.length;
     for (let i = 0; i < str.length; i++) {
@@ -682,37 +766,41 @@ Enter each participant on a new line..."></textarea>
   }
 
   function animateWinner() {
-    winnerMain.style.opacity = '0';
-    winnerMain.style.transform = 'scale(0.8) rotate(-10deg)';
-    
+    winnerMain.style.opacity = "0";
+    winnerMain.style.transform = "scale(0.8) rotate(-10deg)";
+    winnerName.style.opacity = "0";
+    winnerName.style.transform = "translateY(10px)";
+
     setTimeout(() => {
-      winnerMain.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      winnerMain.style.opacity = '1';
-      winnerMain.style.transform = 'scale(1) rotate(0deg)';
+      winnerMain.style.transition = "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)";
+      winnerMain.style.opacity = "1";
+      winnerMain.style.transform = "scale(1) rotate(0deg)";
+
+      winnerName.style.transition = "all 0.45s ease";
+      winnerName.style.opacity = "1";
+      winnerName.style.transform = "translateY(0)";
     }, 100);
   }
 
-  // Copy winner to clipboard
   el("btnCopy").addEventListener("click", async () => {
     const mainText = winnerMain.textContent;
-    if (mainText === '?' || mainText === '—') {
+    if (mainText === "?" || mainText === "—") {
       alert("Please pick a winner first!");
       return;
     }
-    
-    const nameText = winnerName.style.display !== "none" ? winnerName.textContent : '';
+
+    const nameText = winnerName.style.display !== "none" ? winnerName.textContent : "";
     const text = nameText ? `${mainText} ${nameText}` : mainText;
-    
+
     try {
       await navigator.clipboard.writeText(text);
-      
-      // Visual feedback
+
       const btn = el("btnCopy");
       const originalText = btn.innerHTML;
       btn.innerHTML = "✅ Copied!";
       btn.style.borderColor = "var(--accent)";
       btn.style.background = "rgba(16, 185, 129, 0.2)";
-      
+
       setTimeout(() => {
         btn.innerHTML = originalText;
         btn.style.borderColor = "";
@@ -723,13 +811,11 @@ Enter each participant on a new line..."></textarea>
     }
   });
 
-  // Main pick function
   el("btnPick").addEventListener("click", () => {
     const names = getNames();
     const min = Number(minEl.value);
     const max = Number(maxEl.value);
 
-    // Pick from list
     if (names.length > 0) {
       const seedText = "seed-" + Date.now();
       const seedFn = xmur3(seedText);
@@ -737,33 +823,30 @@ Enter each participant on a new line..."></textarea>
       const idx = randInt(0, names.length - 1, rng);
       const picked = names[idx];
 
-      // Show number (index + 1) and name
-      const numberDisplay = String(idx + 1);
-      winnerMain.innerHTML = numberDisplay;
-      winnerMain.classList.remove('placeholder');
+      winnerMain.textContent = String(idx + 1);
+      winnerMain.classList.remove("placeholder");
       winnerName.style.display = "block";
       winnerName.textContent = picked;
-      
+
       animateWinner();
       return;
     }
 
-    // Pick number only
     if (!Number.isFinite(min) || !Number.isFinite(max) || min > max) {
-      alert("Please check your number range (min should be ≤ max)");
+      alert("Please check your number range");
       return;
     }
-    
+
     const seedText = "seed-" + Date.now();
     const seedFn = xmur3(seedText);
     const rng = mulberry32(seedFn());
     const num = randInt(min, max, rng);
 
-    // Show just the number
-    winnerMain.innerHTML = String(num);
-    winnerMain.classList.remove('placeholder');
+    winnerMain.textContent = String(num);
+    winnerMain.classList.remove("placeholder");
     winnerName.style.display = "none";
-    
+    winnerName.textContent = "";
+
     animateWinner();
   });
 </script>
